@@ -30,11 +30,14 @@ fun main() {
  * Defines the UI and responds to events
  * The app model should be passwd as an argument
  */
-class MainWindow : JFrame(), ActionListener {
+class MainWindow : JFrame(), ActionListener, KeyListener {
 
     // Fields to hold the UI elements
     private lateinit var greetingLabel: JLabel
     private lateinit var helloButton: JButton
+    private lateinit var goodbyeButton: JButton
+    private lateinit var textBox: JTextField
+
 
     /**
      * Configure the UI and display it
@@ -52,7 +55,7 @@ class MainWindow : JFrame(), ActionListener {
      */
     private fun configureWindow() {
         title = "Kotlin Swing GUI Demo"
-        contentPane.preferredSize = Dimension(600, 350)
+        contentPane.preferredSize = Dimension(700, 500)
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         isResizable = false
         layout = null
@@ -72,13 +75,29 @@ class MainWindow : JFrame(), ActionListener {
         greetingLabel.font = defaultFont
         add(greetingLabel)
 
-        helloButton = JButton("Click Me!")
-        helloButton.bounds = Rectangle(50,200,500,100)
+        helloButton = JButton("Hello!")
+        helloButton.bounds = Rectangle(50,300,250,100)
         helloButton.addActionListener(this)     // Handle any clicks
         helloButton.font = defaultFont
         helloButton.foreground = Color.YELLOW
         helloButton.background = Color(0,33,66)
         add(helloButton)
+
+        goodbyeButton = JButton("Good bye!")
+        goodbyeButton.bounds = Rectangle(400,300,250,100)
+        goodbyeButton.addActionListener(this)     // Handle any clicks
+        goodbyeButton.font = defaultFont
+        goodbyeButton.foreground = Color.YELLOW
+        goodbyeButton.background = Color(0,33,66)
+        add(goodbyeButton)
+
+        textBox = JTextField()
+        textBox.font = defaultFont
+        textBox.addActionListener(this)
+        textBox.addKeyListener(this)
+        textBox.bounds = Rectangle(50,150,600,100)
+        add(textBox)
+
     }
 
 
@@ -86,11 +105,45 @@ class MainWindow : JFrame(), ActionListener {
      * Handle any UI events (e.g. button clicks)
      */
     override fun actionPerformed(e: ActionEvent?) {
+        var sName = if (textBox.text.isBlank()) "Stranger" else textBox.text
+
         when (e?.source) {
+            textBox -> {
+                println("Changed textBox.text to ${textBox.text}")
+            }
             helloButton -> {
-                greetingLabel.text = "You clicked the button!"
+                println("Hello button pressed")
+                greetingLabel.foreground = Color.GREEN
+                greetingLabel.text = "Hello, ${sName}!"
+            }
+            goodbyeButton -> {
+                println("Goodbye button pressed")
+                greetingLabel.foreground = Color.ORANGE
+                greetingLabel.text = "Goodbye, $sName!"
             }
         }
+    }
+
+    override fun keyTyped(e: KeyEvent?) {
+        println("Key typed: ${e?.keyChar}")
+
+    }
+
+    override fun keyPressed(e: KeyEvent?) {
+        println("Key pressed: ${e?.keyCode}")
+//        if (e?.keyCode in KeyEvent.VK_A..KeyEvent.VK_Z) {
+//            greetingLabel.text = "You pressed ${e?.keyChar}"
+//        }
+        if (e?.keyCode in KeyEvent.VK_A..KeyEvent.VK_Z) {
+            println("letter key!!")
+        }
+        else e?.consume()
+
+    }
+
+    override fun keyReleased(e: KeyEvent?) {
+        println("Key released: ${e?.keyCode}")
+
     }
 
 }
